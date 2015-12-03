@@ -4,44 +4,11 @@
 // THEN DRAW THE NODES: X - MATCHING COMPANY&PARENT COMPANY WITH PARENT COMPANY ID
 //                      Y - MATCHING SCORES 
 // Notes: 1. every company(parent and child) should have a unique ID specifying their parent company(Y-axis)
-//        2. data should be nested- hierarchical 
-//        3. Ordinal scale should be used : http://bost.ocks.org/mike/bar/3/ 
+//        2. Ordinal scale should be used : http://bost.ocks.org/mike/bar/3/ 
 //
 // SAMPLE CODE: http://bl.ocks.org/mbostock/4062085 
 //              http://bl.ocks.org/Caged/6476579
 
-
-//-------------------//
-// Sorting Data     // 
-//------------------//
-
-//THIS PART IS PASTED TO LOADDATA.JS FILE. 
-
-//var yDomainCeiling;
-//var IQMax;
-//var parentList = [];
-//var allData= d3.csv("EditedData.csv", function (d) {
-//    console.log(d);
-//    var loggedData = d;
-//    var count = 0;
-//    var tempMax = 0;
-//    for (var i = 0; i < d.length; i++) {
-//        if (d[i].ParentorChild == "Parent") {
-//            count += 1;
-//            parentList.push(d[i]);
-//        }
-//    }
-//    yDomainCeiling = count;
-//    console.log(count);
-//
-//    IQMax = Math.max.apply(Math, d.map(function (o) {
-//        return o.MaxDigitalIQ;
-//    }));
-//    console.log(IQMax);
-//    console.log(parentList);
-//    
-//    drawChart(); // have this function here so that everything is done after the data is completely loaded. 
-//});
 
 
 
@@ -49,30 +16,15 @@
 //  Creating Globals & Initializing
 // ----------------------------//
 
+
+
+
 function initialize() {
 
-    var maxWidth = Math.max(800, Math.min(window.innerHeight, window.innerWidth) - 250);
-
-    // figure out where to use the maxWidth var to have the right scale ???? 
-    var margin = {
-        top: 30,
-        right: 30,
-        bottom: 40,
-        left: 50
-    }; 
-    
-   console.log ($(window).height());
-    
-    var width = $(window).width() - margin.left - margin.right; 
-    
-    //height = $(window).height 
-    
-    var height = 400 - margin.top - margin.bottom;
-   // var width = maxWidth - margin.left - margin.right;
-
-
+    // CHART
     var chartSVG = d3.select("#chart")
         .append("svg")
+        .attr("id", "chartSVG")
         .style("background", "white")
         .attr("width", width)
         .attr("width", width + margin.left + margin.right)
@@ -86,15 +38,76 @@ function initialize() {
         .domain([0, 170])
         .range([0, height]);
 
-    //    var xAxis = d3.svg.axis()
-    //        .scale(xScale)
-    //        .orient("bottom");
+    var vGuideScale = d3.scale.linear()
+        .domain([0, 170])
+        .range([height, 0]);
 
-    //    var yAxis = d3.svg.axis()
-    //        .scale(yScale)
-    //        .orient("left").ticks(20);
-    //
-    //    var yGuide = d3.select("svg").append("g").attr("transform","translate(35,0)");
+    var vAxis = d3.svg.axis()
+        .scale(vGuideScale)
+        .orient('right')
+        .tickSize(width)
+        .ticks(20);
+    var vGuide = chartSVG.append('g').attr("class", "vGuide").call(vAxis);
+
+
+    //drawing dotted lines
+    vGuide.append("line")
+        .attr("class", "dotted")
+        .attr("x1", 0)
+        .attr("y1", function (d) {
+            return height - yScale(70);
+        })
+        .attr("x2", width)
+        .attr("y2", function (d) {
+            return height - yScale(70);
+        })
+        .attr("stroke", "#808080")
+        .attr("stroke-width", 1)
+        .style("stroke-dasharray", ("3,4 "));
+
+    vGuide.append("line")
+        .attr("class", "dotted")
+        .attr("x1", 0)
+        .attr("y1", function (d) {
+            return height - yScale(90);
+        })
+        .attr("x2", width)
+        .attr("y2", function (d) {
+            return height - yScale(90);
+        })
+        .attr("stroke", "#808080")
+        .attr("stroke-width", 1)
+        .style("stroke-dasharray", ("3,4 "));
+
+    vGuide.append("line")
+        .attr("class", "dotted")
+        .attr("x1", 0)
+        .attr("y1", function (d) {
+            return height - yScale(110);
+        })
+        .attr("x2", width)
+        .attr("y2", function (d) {
+            return height - yScale(110);
+        })
+        .attr("stroke", "#808080")
+        .attr("stroke-width", 1)
+        .style("stroke-dasharray", ("3,4 "));
+
+    vGuide.append("line")
+        .attr("class", "dotted")
+        .attr("x1", 0)
+        .attr("y1", function (d) {
+            return height - yScale(140);
+        })
+        .attr("x2", width)
+        .attr("y2", function (d) {
+            return height - yScale(140);
+        })
+        .attr("stroke", "#808080")
+        .attr("stroke-width", 1)
+        .style("stroke-dasharray", ("3,4 "));
+
+
 
     //ToolTip
     var toolTip = d3.select(document.getElementById("toolTip"));
@@ -117,10 +130,12 @@ function initialize() {
             .data(parentList)
             .enter()
             .append("rect")
-            .attr("width", xScale.rangeBand() * 0.2)
+            //.attr("width", xScale.rangeBand() * 0.3)
+            .attr("width", "28px")
             .attr("x", function (d, i) {
                 console.log(xScale(i));
-                return xScale(i) + xScale.rangeBand() * 0.4;
+                //X: HAVING RECT WIDTH FIXED AND THE POSITION IS NOT OFF COLUMN-CENTER:
+                return xScale(i) + (xScale.rangeBand() - 28) / 2;
             })
             .attr("height", function (d, i) {
                 console.log(yScale(d.MaxDigitalIQ - d.MinDigitalIQ));
@@ -131,7 +146,7 @@ function initialize() {
                 console.log(yPosition);
                 return yPosition - 5;
             })
-            .attr("fill", "rgb(229,229,229)");
+            .attr("fill", "rgb(233,233,233)");
     }
 
 
@@ -144,6 +159,10 @@ function initialize() {
             .data(parentList)
             .enter()
             .append("circle")
+            .attr("id", function (d) {
+
+                return d.ParentCompany + "P";
+            })
             .attr("cx", function (d, i) {
                 console.log(i);
                 thisNodeX = xScale(i) + xScale.rangeBand() * 0.5
@@ -172,15 +191,10 @@ function initialize() {
                 }
             })
 
-        .on("mouseover", function (d) {
+        .on("mouseover", function (d, i) {
+                console.log(i);
                 var thisProject = d;
-                toolTip.transition()
-                    .duration(200)
-                    .style("opacity", 0.8)
-                    .style("position", "absolute")
-                    .style("left", (d3.event.pageX + 15) + "px")
-                    .style("top", (d3.event.pageY - 25) + "px")
-                    .style("height", "100px");
+
                 DIQ.text(function () {
                         return "DIQ: " + thisProject.AvgDigitalIQ;
                     })
@@ -219,13 +233,80 @@ function initialize() {
                     });
 
                 NameOfCompany.text(function () {
-                        return thisProject.Brands + "(Parent)";
+
+                        return thisProject.Brands;
                     })
                     .style("font-family", "Helvetica Neue LT Std")
                     .style("font-size", "12");
 
+                //                d3.select(document.getElementById(d.ParentCompany + "P")).transition().duration(500)
+                //                    .attr("cx", function (d) {
+                //
+                //                        thisNodeX = xScale(i) + xScale.rangeBand() * 0.4;
+                //                        console.log(thisNodeX);
+                //                        return thisNodeX;
+                //
+                //                    })
+                //                    .attr("fill", function (d) {
+                //                        console.log(d);
+                //                        console.log(thisProject.DigitalIQ);
+                //                        if (thisProject.DigitalIQ > 140) {
+                //                            return "rgb(62,165,72)";
+                //                        } else if (thisProject.AvgDigitalIQ > 110 && thisProject.AvgDigitalIQ <= 140) {
+                //                            return "rgb(0,176,158)";
+                //                        } else if (thisProject.AvgDigitalIQ > 90 && thisProject.AvgDigitalIQ <= 110) {
+                //                            return "rgb(138,113,179)";
+                //                        } else if (thisProject.AvgDigitalIQ > 70 && thisProject.AvgDigitalIQ <= 90) {
+                //                            return "rgb(223,196,35)";
+                //                        } else if (thisProject.AvgDigitalIQ < 70) {
+                //                            return "rgb(231,67,65)";
+                //                        }
+                //                    })
+                //                    .attr("opacity", "0.5");
+
+                toolTip.transition()
+                    .duration(200)
+                    .style("opacity", 0.8)
+                    .style("position", "absolute")
+                    .style("left", (d3.event.pageX + 15) + "px")
+                    .style("top", (d3.event.pageY - 25) + "px")
+                    .style("width", function () {
+                        return xScale.rangeBand();
+                    })
+                    .style("height", function () {
+
+                        var tempObj = document.getElementById("Index" + thisProject.Brands);
+                        var lineNum = tempObj.childElementCount;
+                        console.log(tempObj.childElementCount);
+                        return 15 + 25 * lineNum;
+                    });
+
             })
-            .on("mouseout", function () {
+            .on("mouseout", function (d, i) {
+
+
+                d3.select(document.getElementById(d.ParentCompany + "P")).transition().duration(500)
+                    .attr("cx", function (d) {
+
+                        thisNodeX = xScale(i) + xScale.rangeBand() * 0.5;
+                        return thisNodeX;
+
+                    })
+                    .attr("fill", function (d) {
+                        var thisProject = d;
+                        if (thisProject.DigitalIQ > 140) {
+                            return "rgb(62,165,72)";
+                        } else if (thisProject.AvgDigitalIQ > 110 && thisProject.AvgDigitalIQ <= 140) {
+                            return "rgb(0,176,158)";
+                        } else if (thisProject.AvgDigitalIQ > 90 && thisProject.AvgDigitalIQ <= 110) {
+                            return "rgb(138,113,179)";
+                        } else if (thisProject.AvgDigitalIQ > 70 && thisProject.AvgDigitalIQ <= 90) {
+                            return "rgb(223,196,35)";
+                        } else if (thisProject.AvgDigitalIQ < 70) {
+                            return "rgb(231,67,65)";
+                        }
+
+                    }).attr("opacity", "1");
 
                 toolTip.transition()
                     .duration(500)
@@ -239,6 +320,9 @@ function initialize() {
             .data(childList)
             .enter()
             .append("circle")
+            .attr("id", function (d) {
+                return d.Brands;
+            })
             .attr("cx", function (d, i) {
                 var parentIndex = _.findIndex(parentList, {
                     "Brands": d.ParentCompany
@@ -246,6 +330,7 @@ function initialize() {
                 return xScale(parentIndex) + xScale.rangeBand() * 0.5;
             })
             .attr("cy", function (d, i) {
+                console.log(d)
                 return height - yScale(d.DigitalIQ);
             })
             .attr("r", function (d, i) {
@@ -255,14 +340,7 @@ function initialize() {
             .attr("fill", function (d, i) {
                 return "rgb(69,69,69)";
             }).on("mouseover", function (d) {
-                var thisProject = d
-                toolTip.transition()
-                    .duration(200)
-                    .style("opacity", 0.8)
-                    .style("position", "absolute")
-                    .style("left", (d3.event.pageX + 15) + "px")
-                    .style("top", (d3.event.pageY - 25) + "px")
-                    .style("height", "100px");
+                var thisProject = d; 
                 DIQ.text(function () {
                         return "DIQ: " + thisProject.DigitalIQ;
                     })
@@ -306,8 +384,62 @@ function initialize() {
                     .style("font-family", "Helvetica Neue LT Std")
                     .style("font-size", "12");
 
+                //                d3.select(document.getElementById(d.Brands)).transition().duration(500)
+                //                    .attr("cx", function (d, i) {
+                //                        var parentIndex = _.findIndex(parentList, {
+                //                            "Brands": d.ParentCompany
+                //                        });
+                //                        return xScale(parentIndex) + xScale.rangeBand() * 0.4;
+                //
+                //                    })
+                //                    .attr("fill", function (d, i) {
+                //                        if (thisProject.DigitalIQ > 140) {
+                //                            return "rgb(62,165,72)";
+                //                        } else if (thisProject.DigitalIQ > 110 && thisProject.DigitalIQ <= 140) {
+                //                            return "rgb(0,176,158)";
+                //                        } else if (thisProject.DigitalIQ > 90 && thisProject.DigitalIQ <= 110) {
+                //                            return "rgb(138,113,179)";
+                //                        } else if (thisProject.DigitalIQ > 70 && thisProject.DigitalIQ <= 90) {
+                //                            return "rgb(223,196,35)";
+                //                        } else if (thisProject.DigitalIQ < 70) {
+                //                            return "rgb(231,67,65)";
+                //                        }
+                //                    })
+                //                    .attr("opacity", "0.5");
+
+
+                // console.log(d.Brands);
+
+                toolTip.transition()
+                    .duration(200)
+                    .style("opacity", 0.8)
+                    .style("position", "absolute")
+                    .style("left", (d3.event.pageX + 15) + "px")
+                    .style("top", (d3.event.pageY - 25) + "px")
+                    .style("width", function () {
+                        return xScale.rangeBand();
+                    })
+                    .style("height", function () {
+
+                        var tempObj = document.getElementById("Index" + thisProject.Brands);
+                        var lineNum = tempObj.childElementCount;
+                        console.log(tempObj.childElementCount);
+                        return 15 + 25 * lineNum;
+                    });
+
             })
-            .on("mouseout", function () {
+            .on("mouseout", function (d) {
+                d3.select(document.getElementById(d.Brands)).transition().duration(500)
+                    .attr("cx", function (d, i) {
+
+                        var parentIndex = _.findIndex(parentList, {
+                            "Brands": d.ParentCompany
+                        });
+                        return xScale(parentIndex) + xScale.rangeBand() * 0.5;
+
+                    })
+                    .attr("fill", "black").attr("opacity", "1");
+                //   console.log(d.Brands);
 
                 toolTip.transition()
                     .duration(500)
@@ -323,25 +455,334 @@ function initialize() {
     drawNodes();
 
     // DRAWING VGUIDE
-    var vGuideScale = d3.scale.linear()
-        .domain([0, 170])
-        .range([height, 0]);
 
-    var vAxis = d3.svg.axis()
-        .scale(vGuideScale)
-        .orient('left')
-        .ticks(10);
 
-    var vGuide = chartSVG.append('g').call(vAxis);
+
+    vGuide.selectAll("g").filter(function (d) {
+            return d;
+        })
+        .classed("minor", true);
+
+    vGuide.selectAll("text").style("text-anchor", "end")
+        .attr("x", -10)
+        .attr("dy", 0);
     // vAxis(vGuide); // this line is equal to ".call(vAxis)"
-    vGuide.attr('transform', 'translate(35, 30)'); // the 30 comes from the "margin" obj
+    vGuide.attr("transform", "translate(" + margin.left + ", " + margin.top + ")"); // the 30 comes from the "margin" obj
     vGuide.selectAll('path')
         .style({
             fill: 'none',
-            stroke: "#000"
+            stroke: false
         });
-    vGuide.selectAll('line')
+
+    vGuide.selectAll("rect").data(legendData).enter().append("rect")
+        .attr("x", 0)
+        .attr("y", function (d) {
+            return height - yScale(d.ceiling);
+
+        })
+        .attr("width", 2.5)
+        .attr("height", function (d) {
+            return yScale(d.ceiling) - yScale(d.floor) - yScale(1.5);
+        })
+        .attr("fill", function (d) {
+            return d.fill;
+        });
+
+    //console.log(parentList);
+
+    var xAxis = d3.svg.axis()
+        .scale(xScale)
+        .ticks(1)
+        .tickSize(height)
+        .orient("bottom");
+
+    //console.log(xScale.rangeBand());
+    xAxisOffset = margin.left + xScale.rangeBand() * 0.5;
+    var xGuide = chartSVG.append("g")
+        .attr("class", "xGuide")
+        .call(xAxis)
+        .attr("transform", "translate(" + xAxisOffset + ", " + margin.top + ")")
+        .selectAll('path')
         .style({
-            stroke: "#000"
+            fill: "none",
+            opacity: 0.1
+        })
+        .style("stroke", "none")
+        .style("stroke-width", "1px")
+
+    xGuide.selectAll("text").remove();
+
+
+
+
+    //drawing lines - horizontal (from top to bottom, undotted)
+    vGuide.append("line")
+        .attr("x1", 0)
+        .attr("y1", function (d) {
+            return -yScale(15);
+        })
+        .attr("x2", width)
+        .attr("y2", function (d) {
+            return -yScale(15);
+        })
+        .attr("stroke", "#cccccc")
+        .attr("stroke-width", 1);
+    vGuide.append("line")
+        .attr("x1", 0)
+        .attr("y1", 0)
+        .attr("x2", width)
+        .attr("y2", 0)
+        .attr("stroke", "#cccccc")
+        .attr("stroke-width", 1);
+    vGuide.append("line")
+        .attr("x1", 0)
+        .attr("y1", height)
+        .attr("x2", width)
+        .attr("y2", height)
+        .attr("stroke", "#cccccc")
+        .attr("stroke-width", 1);
+    vGuide.append("line")
+        .attr("x1", 0)
+        .attr("y1", function (d) {
+            return height + yScale(35);
+        })
+        .attr("x2", width)
+        .attr("y2", function (d) {
+            return height + yScale(35);
+        })
+        .attr("stroke", "#cccccc")
+        .attr("stroke-width", 1);
+
+
+    // drawing two extra lines for enclosure 
+    vGuide.append("line")
+        .attr("x1", 0)
+        .attr("y1", function (d) {
+            return height;
+        })
+        .attr("x2", 0)
+        .attr("y2", function (d) {
+            return height + yScale(35);
+        })
+        .attr("stroke", "#cccccc")
+        .attr("stroke-width", 1);
+
+    vGuide.append("line")
+        .attr("x1", 0)
+        .attr("y1", function (d) {
+            return 0;
+        })
+        .attr("x2", 0)
+        .attr("y2", function (d) {
+            return -yScale(15);
+        })
+        .attr("stroke", "#cccccc")
+        .attr("stroke-width", 1);
+
+
+    //TEXT ON TOP of GRAPHY  : RANGE
+    vGuide.append("g").selectAll("text").data(parentList).enter()
+        .append("text")
+        .text(function (d) {
+            var range = d.MaxDigitalIQ - d.MinDigitalIQ;
+            return "Range: " + range;
+        }).attr("x", function (d, i) {
+            return i * width / parentList.length + xScale.rangeBand() / 2;
+        }).attr("y", -yScale(15) / 2)
+        .attr("font-size", "12")
+        .attr("font-family", "HelveticaNeueLTStd-Cn")
+        .attr("fill", "rgb(128,128,128)")
+        .attr("text-anchor", "middle")
+        .attr("alignment-baseline", "middle");
+
+
+
+    // Drawing lines to seperate RANGE values
+    vGuide.append("g").selectAll("line").data(parentList).enter()
+        .append("line")
+        .attr("x1", function (d, i) {
+            return (i + 1) * width / parentList.length;
+        })
+        .attr("y1", function (d, i) {
+            return -yScale(15);
+        })
+        .attr("x2", function (d, i) {
+            return (i + 1) * width / parentList.length;
+        })
+        .attr("y2", function (d, i) {
+            return 0;
+        })
+        .attr("stroke", "#cccccc")
+        .attr("stroke-width", 1);
+
+
+    // Drawing lines to seperate company names
+    vGuide.append("g").selectAll("line").data(parentList).enter()
+        .append("line")
+        .attr("x1", function (d, i) {
+            return (i + 1) * width / parentList.length;
+        })
+        .attr("y1", function (d, i) {
+            return height;
+        })
+        .attr("x2", function (d, i) {
+            return (i + 1) * width / parentList.length;
+        })
+        .attr("y2", function (d, i) {
+            return height + yScale(35);
+        })
+        .attr("stroke", "#cccccc")
+        .attr("stroke-width", 1);
+
+
+    //TEXT ON BOTTOM
+    //writing parent company names
+    vGuide.append("g")
+        .attr("transform", "translate(4,0)")
+        .selectAll("text").data(parentList).enter()
+        .append("text")
+        .attr("id", function (d, i) {
+            return "Index" + d.Brands;
+
+        })
+        .text(function (d) {
+
+            return d.Brands;
+        }).call(wrap)
+        .attr("y", height + yScale(17))
+        .attr("x", function (d, i) {
+            return i * width / parentList.length;
+        })
+        .attr("transform", function (d, i) {
+
+
+            return "translate(" + xScale.rangeBand() * i + ",0)";
+        })
+        .attr("font-size", "12")
+        .attr("font-family", "HelveticaNeueLTStd-Cn")
+        .attr("fill", "black")
+        .attr("text-anchor", "left")
+        .attr("alignment-baseline", "middle");
+
+
+    // IN ORDER TO GET COMPUTED LENGTH OF CHILD COMPANY NAMES...
+    vGuide.append("g")
+        .attr("transform", "translate(4,0)")
+        .selectAll("text").data(childList).enter()
+        .append("text")
+        .attr("id", function (d, i) {
+            return "Index" + d.Brands;
+
+        })
+        .text(function (d) {
+
+            return d.Brands;
+        }).call(wrap)
+        .attr("y", height + yScale(17))
+        .attr("x", function (d, i) {
+            return i * width / parentList.length;
+        })
+        .attr("transform", function (d, i) {
+
+
+            return "translate(" + xScale.rangeBand() * i + ",0)";
+        })
+        .attr("font-size", "12")
+        .attr("font-family", "HelveticaNeueLTStd-Cn")
+        .attr("fill", "black")
+        .attr("text-anchor", "left")
+        .attr("alignment-baseline", "middle")
+        .style("display", "none");
+
+
+    // writing number of child companies 
+    vGuide.append("g")
+        .attr("transform", "translate(4,0)")
+        .selectAll("text").data(parentList).enter()
+        .append("text")
+        .text(function (d) {
+            var temp = d;
+            var count = -1;
+            for (i = 0; i < loggedData.length; i++) {
+                //console.log(temp.Brands); 
+                //console.log(loggedData[i].Brands);
+                if (temp.Brands == loggedData[i].ParentCompany) {
+                    count += 1;
+                    //console.log(count);
+                }
+            }
+
+            return "n=" + count;
+        }).call(wrap)
+        .attr("y", height + yScale(15) / 2)
+        .attr("x", function (d, i) {
+            return i * width / parentList.length;
+        })
+        .attr("transform", function (d, i) {
+
+
+            return "translate(" + xScale.rangeBand() * i + ",0)";
+        })
+        .attr("font-size", "12")
+        .attr("font-family", "HelveticaNeueLTStd-Cn")
+        .attr("fill", "grey")
+        .attr("text-anchor", "left")
+        .attr("alignment-baseline", "middle");
+
+
+
+
+
+
+    //DRAWING ROTATED GRAPH TITLE 
+    vGuide.append("g")
+        .append("text")
+        .text(function (d) {
+
+            return "DIGITAL IQ SCORE";
+        })
+        .attr("transform", function (d, i) {
+
+
+            return "translate(" + xScale.rangeBand() * i + ",0)";
+        })
+        //   .attr("transform", "translate(20," +   height + ")")
+        .attr("transform", "translate(-40,250) rotate(-90)")
+        .attr("font-size", "12")
+        .attr("font-family", "Helvetica")
+        .attr("fill", "black")
+        .attr("text-anchor", "left")
+        .attr("alignment-baseline", "middle");
+
+
+
+    function wrap(text, width) {
+        width = xScale.rangeBand();
+        console.log(xScale.rangeBand());
+        text.each(function () {
+            var text = d3.select(this),
+                words = text.text().split(/\s+/).reverse(),
+                word,
+                line = [],
+                lineNumber = 0,
+                lineHeight = 14, // ems
+                y = text.attr("y"),
+                dy = parseFloat(text.attr("dy")),
+                i = parentList.indexOf(text)
+            tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", 0 + "px");
+            ++lineNumber
+            while (word = words.pop()) {
+                line.push(word);
+                tspan.text(line.join(" "));
+                if (tspan.node().getComputedTextLength() > width * 1.3) { // tweaked width*1 to *1.5/1.3 since labels are off by 0.5*rangebandWidth 
+                    line.pop();
+                    tspan.text(line.join(" "));
+                    line = [word];
+                    tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", function () {
+                        return lineNumber * lineHeight + "px";
+                    }).text(word);
+                }
+            }
         });
+    }
 }

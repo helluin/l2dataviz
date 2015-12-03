@@ -1,7 +1,132 @@
-#chart { 
+#headings {
+    margin-top: 50px;
+    position: relative;
+    padding-left: 15%;
+}
 
-position:absolute; 
-margin-right:10%;
-margin-left:10%
+#title {
+    font-family: "HelveticaNeueLTStd-LtCn", "Helvetica Neue";
+    font-size: 28;
+    font-weight: lighter;
+    margin-bottom: 0;
+    /*
     
+    margin-left:10%; 
+    margin-top: 30; 
+  
+*/
+}
+
+#cat {
+    font-size: 12px;
+    font-family: "Helvetica Neue LT Std";
+    color: #808080;
+    margin-top: 8;
+}
+
+.year {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0px;
+    font-family: "Helvetica Neue LT Std";
+    color: #000000;
+    font-size: 12px;
+    background: #ffffff;
+    padding: 5px 12px 5px 12px;
+    border: solid #cccccc 1px;
+    text-decoration: none;
+    font-weight: lighter;
+    margin-top: 14;
+    margin-bottom: 20;
+}
+
+.year:focus {
+    outline: 0;
+}
+
+#legendSVG {
+    /*    margin-left: 12%;*/
+    
+    position: absolute;
+}
+
+#container {
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+}
+
+#canvas {
+    margin: auto;
+    position: absolute;
+    left: 0;
+    right: 0
+}
+
+#chartSVG {
+    margin-left: 15%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50;
+    margin-bottom: auto;
+    padding: 5px;
+}
+
+.tick path,
+.tick line {
+    fill: none;
+}
+
+.minor line {
+    visibility: hidden;
+    stroke: lightgrey;
+    stroke-dasharray: 2, 2;
+    z-index: -5
+}
+
+.minor text {
+    fill: #808080;
+}
+
+.xGuide line {
+    stroke: lightgrey;
+}
+
+.xGuide text {
+    display: none;
+}
+
+.tick text {
+    font-size: 10px;
+    font-family: "Helvetica Neue LT Std";
+    color: lightgrey;
+}
+
+#tooltip {
+    position: absolute;
+    /* reference for measurement */
+    
+    text-align: left;
+    pointer-events: none;
+    /* 'none' tells the mouse to ignore the rectangle */
+    
+    background: #FFFFEF;
+    width: 50px;
+    height: 30px;
+    padding: 5px;
+    border: 1px solid #D5D5D5;
+    font-family: helvetica, sans-serif;
+    position: absolute;
+    font-size: 11px;
+    color: #333;
+   
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(200, 200, 200, 0.85);
+    opacity: 0;
+    z-index: 3
 }
