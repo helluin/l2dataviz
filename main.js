@@ -147,6 +147,7 @@ function initialize() {
                 return yPosition - 5;
             })
             .attr("fill", "rgb(233,233,233)");
+            
     }
 
 
@@ -189,7 +190,9 @@ function initialize() {
                 } else if (d.AvgDigitalIQ < 70) {
                     return "rgb(231,67,65)";
                 }
-            })
+            }
+                 
+                 )
 
         .on("mouseover", function (d, i) {
                 console.log(i);
@@ -236,7 +239,7 @@ function initialize() {
 
                         return thisProject.Brands;
                     })
-                    .style("font-family", "Helvetica Neue LT Std")
+                    .style("font-family",  "Helvetica Neue LT Std")
                     .style("font-size", "12");
 
                 //                d3.select(document.getElementById(d.ParentCompany + "P")).transition().duration(500)
@@ -278,7 +281,7 @@ function initialize() {
                         var tempObj = document.getElementById("Index" + thisProject.Brands);
                         var lineNum = tempObj.childElementCount;
                         console.log(tempObj.childElementCount);
-                        return 15 + 25 * lineNum;
+                        return 17 + 22 * lineNum;
                     });
 
             })
@@ -340,7 +343,7 @@ function initialize() {
             .attr("fill", function (d, i) {
                 return "rgb(69,69,69)";
             }).on("mouseover", function (d) {
-                var thisProject = d; 
+                var thisProject = d;
                 DIQ.text(function () {
                         return "DIQ: " + thisProject.DigitalIQ;
                     })
@@ -424,7 +427,7 @@ function initialize() {
                         var tempObj = document.getElementById("Index" + thisProject.Brands);
                         var lineNum = tempObj.childElementCount;
                         console.log(tempObj.childElementCount);
-                        return 15 + 25 * lineNum;
+                        return 17 + 22 * lineNum;
                     });
 
             })
